@@ -317,7 +317,7 @@ void serialin(USART_TypeDef* uart, unsigned int intr)
 void show_greeting(int argc, char *argv[])
 {
 	int fdout = open("/dev/tty0/out", 0);
-	char *string = "\n\rHello, World!";
+	char *string = "\n\rHello World!";
 	while (*string) {
 		write(fdout, string, 1);
 		string++;
@@ -1119,7 +1119,7 @@ int main()
 		tasks[current_task].status = TASK_READY;
 		timeup = 0;
 
-		switch (tasks[current_task].stack->r7) {
+		switch (tasks[current_task].stack->r8) {
 		case 0x1: /* fork */
 			if (task_count == TASK_LIMIT) {
 				/* Cannot create a new task, return error */
@@ -1203,8 +1203,8 @@ int main()
 			}
 			break;
 		default: /* Catch all interrupts */
-			if ((int)tasks[current_task].stack->r7 < 0) {
-				unsigned int intr = -tasks[current_task].stack->r7 - 16;
+			if ((int)tasks[current_task].stack->r8 < 0) {
+				unsigned int intr = -tasks[current_task].stack->r8 - 16;
 
 				if (intr == SysTick_IRQn) {
 					/* Never disable timer. We need it for pre-emption */
