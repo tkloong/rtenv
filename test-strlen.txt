@@ -1,2 +1,0 @@
-Pass: strlen("man") is 3
-Pass: strlen("") is 0

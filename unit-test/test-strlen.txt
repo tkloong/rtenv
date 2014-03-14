@@ -1,0 +1,2 @@
+Pass: strlen("test") is 4
+Pass: strlen("") is 0
