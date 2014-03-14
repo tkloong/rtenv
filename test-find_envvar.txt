@@ -1,0 +1,12 @@
+Current environment variables:
+Name: EDITOR; Value: vi
+Name: PATH; Value: ~
+Name: LC_ALL; Value: UTF8
+Searching: "vi"
+Pass: correct value
+Searching: "~"
+Pass: correct value
+Searching: "UTF8"
+Pass: correct value
+Searching for an undefined environment variable:
+Pass: this variable is not found

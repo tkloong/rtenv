@@ -1,0 +1,5 @@
+Compared strings: "12", "13"
+strncmp of length 1:
+Pass: strncmp returns 0
+strncmp of length 2:
+Pass: strncmp returns nonzero

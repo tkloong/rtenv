@@ -1,0 +1,3 @@
+Pass: itoa correctly converts 0 into "0"
+Pass: itoa correctly converts -32768 into "-32768"
+Pass: itoa correctly converts 32767 into "32767"

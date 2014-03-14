@@ -1,0 +1,3 @@
+Pass: strcmp("def", "def") is 0
+Pass: strcmp("cef", "def") returns negative value
+Pass: strcmp("gef", "def") returns positive value

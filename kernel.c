@@ -1,8 +1,19 @@
 #include "stm32f10x.h"
 #include "RTOSConfig.h"
 
+#include "kernel.h"
+#ifdef DEBUG
+#include "unit_test.h"
+#endif
+
 #include "syscall.h"
 #include <stddef.h>
+
+void *malloc (size_t size)
+{
+	static char m[1024] = {0};
+	return m;
+}
 
 void *memcpy(void *dest, const void *src, size_t n);
 
@@ -59,36 +70,6 @@ void puts(char *s)
 	}
 }
 
-#define MAX_CMDNAME 19
-#define MAX_ARGC 19
-#define MAX_CMDHELP 1023
-#define HISTORY_COUNT 20
-#define CMDBUF_SIZE 100
-#define MAX_ENVCOUNT 30
-#define MAX_ENVNAME 15
-#define MAX_ENVVALUE 127
-#define STACK_SIZE 512 /* Size of task stacks in words */
-#define TASK_LIMIT 8  /* Max number of tasks we can handle */
-#define PIPE_BUF   64 /* Size of largest atomic pipe message */
-#define PATH_MAX   32 /* Longest absolute path */
-#define PIPE_LIMIT (TASK_LIMIT * 2)
-
-#define PATHSERVER_FD (TASK_LIMIT + 3) 
-	/* File descriptor of pipe to pathserver */
-
-#define PRIORITY_DEFAULT 20
-#define PRIORITY_LIMIT (PRIORITY_DEFAULT * 2 - 1)
-
-#define TASK_READY      0
-#define TASK_WAIT_READ  1
-#define TASK_WAIT_WRITE 2
-#define TASK_WAIT_INTR  3
-#define TASK_WAIT_TIME  4
-
-#define S_IFIFO 1
-#define S_IMSGQ 2
-
-#define O_CREAT 4
 
 /*Global Variables*/
 char next_line[3] = {'\n','\r','\0'};
@@ -107,17 +88,6 @@ void show_man_page(int argc, char *argv[]);
 void show_history(int argc, char *argv[]);
 void show_greeting(int argc, char *argv[]);
 
-/* Enumeration for command types. */
-enum {
-	CMD_ECHO = 0,
-	CMD_EXPORT,
-	CMD_HELP,
-	CMD_HISTORY,
-	CMD_MAN,
-	CMD_PS,
-	CMD_GREET,
-	CMD_COUNT
-} CMD_TYPE;
 /* Structure for command handler. */
 typedef struct {
 	char cmd[MAX_CMDNAME + 1];
@@ -134,11 +104,6 @@ const hcmd_entry cmd_data[CMD_COUNT] = {
 	[CMD_GREET] = {.cmd = "greet", .func = show_greeting, .description = "Print \"Hello World!\"."}
 };
 
-/* Structure for environment variables. */
-typedef struct {
-	char name[MAX_ENVNAME + 1];
-	char value[MAX_ENVVALUE + 1];
-} evar_entry;
 evar_entry env_var[MAX_ENVCOUNT];
 int env_count = 0;
 
@@ -667,20 +632,19 @@ void show_task_info(int argc, char* argv[])
 
 //this function helps to show int
 
-void itoa(int n, char *dst, int base)
+void itoa(int n, char *dst)
 {
-	char buf[33] = {0};
-	char *p = &buf[32];
+	char buf[11] = {0};
+	char *p = &buf[11];
 
 	if (n == 0)
 		*--p = '0';
 	else {
-		char *q;
-		unsigned int num = (base == 10 && num < 0) ? -n : n;
+		unsigned int num = (n < 0) ? -n : n;
 
-		for (; num; num/=base)
-			*--p = "0123456789ABCDEF" [num % base];
-		if (base == 10 && n < 0)
+		for (; num; num/=10)
+			*--p = '0' + num % 10;
+		if (n < 0)
 			*--p = '-';
 	}
 
@@ -1119,6 +1083,7 @@ int main()
 		tasks[current_task].status = TASK_READY;
 		timeup = 0;
 
+		//write(fdout, tasks[current_task].stack->pc, 4);
 		switch (tasks[current_task].stack->r8) {
 		case 0x1: /* fork */
 			if (task_count == TASK_LIMIT) {
@@ -1224,11 +1189,9 @@ int main()
 		}
 
 		/* Put waken tasks in ready list */
-		for (task = wait_list; task != NULL;) {
-			struct task_control_block *next = task->next;
+		for (task = wait_list; task != NULL; task = task->next) {
 			if (task->status == TASK_READY)
 				task_push(&ready_list[task->priority], task);
-			task = next;
 		}
 		/* Select next TASK_READY task */
 		for (i = 0; i < (size_t)tasks[current_task].priority && ready_list[i] == NULL; i++);
@@ -1247,5 +1210,8 @@ int main()
 		current_task = task_pop(&ready_list[i])->pid;
 	}
 
+#ifdef DEBUG
+	unit_test();
+#endif
 	return 0;
 }

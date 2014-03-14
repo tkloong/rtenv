@@ -1,0 +1,11 @@
+Processed command: echo -n "A B"
+Tokens:
+#1 "echo"
+#2 "-n"
+#3 "A B"
+Testing token: "echo"
+Pass: this token is correct
+Testing token: "-n"
+Pass: this token is correct
+Testing token: "A B"
+Pass: this token is correct

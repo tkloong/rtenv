@@ -1,0 +1,8 @@
+Current history:
+#0 help
+#1 echo Hello!
+#2 history
+Processed command: !e
+Pass: the latest command starting with e is found
+Processed command: !h
+Pass: the latest command starting with h is found

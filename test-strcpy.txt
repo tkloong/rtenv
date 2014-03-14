@@ -1,0 +1,2 @@
+Pass: "ps" was successfully copied
+Pass: empty string was successfully copied

@@ -1,0 +1,9 @@
+Current environment variables:
+Name: EDITOR; Value: gedit
+Name: PATH; Value: ~
+Name: LC_ALL; Value: UTF8
+Processed argv list:
+#0 export
+#1 EDITOR=vi
+Pass: exported value is correct
+Pass: correct value of env_count

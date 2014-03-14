@@ -1,0 +1,7 @@
+Current environment variables:
+Name: EDITOR; Value: vi
+Name: PATH; Value: ~
+Name: LC_ALL; Value: UTF8
+Processed argument: PATH=/:$PATH
+Pass: replaced string is correct
+Pass: correct returned value
