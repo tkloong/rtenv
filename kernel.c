@@ -11,9 +11,10 @@
 
 void *malloc (size_t size)
 {
-	static char m[1024] = {0};
+	static char m[1024];
 	return m;
 }
+
 
 void *memcpy(void *dest, const void *src, size_t n);
 

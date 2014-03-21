@@ -54,9 +54,6 @@ qemudbg: main.bin $(QEMU_STM32)
 		-gdb tcp::3333 -S \
 		-kernel main.bin
 
-qemu_remote: main.bin $(QEMU_STM32)
-	$(QEMU_STM32) -M stm32-p103 -kernel main.bin -vnc :1
-
 qemudbg_remote: main.bin $(QEMU_STM32)
 	$(QEMU_STM32) -M stm32-p103 \
 		-gdb tcp::3333 -S \
@@ -77,7 +74,7 @@ qemudbg_remote_bg: main.bin $(QEMU_STM32)
 emu: main.bin
 	bash emulate.sh main.bin
 
-check: unit_test.c unit_test.h
+check:
 	$(MAKE) main.bin DEBUG_FLAGS=-DDEBUG
 	$(QEMU_STM32) -nographic -M stm32-p103 \
 		-gdb tcp::3333 -S \
